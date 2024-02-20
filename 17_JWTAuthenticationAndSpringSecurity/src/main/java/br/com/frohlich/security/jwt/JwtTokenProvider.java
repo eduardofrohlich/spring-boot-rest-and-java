@@ -1,4 +1,4 @@
-package br.com.frohlich.securityJwt;
+package br.com.frohlich.security.jwt;
 
 import br.com.frohlich.data.vo.v1.security.TokenVO;
 import br.com.frohlich.exceptions.InvalidJwtAuthenticationException;
