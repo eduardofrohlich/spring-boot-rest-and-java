@@ -17,7 +17,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/book/v1")
-@Tag(name = "Books", description = "API Endpoint for Books Management")
+@Tag(name = "Book", description = "API Endpoint for Books Management")
 
 public class BookController {
 
@@ -25,7 +25,7 @@ public class BookController {
     private BookServices service;
 
     @GetMapping(produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
-    @Operation(summary = "Find all books", description = "Find all books", tags = {"books"},
+    @Operation(summary = "Finds all books", description = "Find all books", tags = {"Book"},
             responses = {
                     @ApiResponse(responseCode = "200", description = "Success",
                             content = {
@@ -46,7 +46,7 @@ public class BookController {
     }
 
     @GetMapping(value = "/{id}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
-    @Operation(summary = "Finds a Book", description = "Finds a Book ", tags = {"books"},
+    @Operation(summary = "Finds a Book", description = "Finds a Book ", tags = {"Book"},
             responses = {
                     @ApiResponse(responseCode = "200", description = "Success", content =
                     @Content(schema = @Schema(implementation =
@@ -65,7 +65,7 @@ public class BookController {
     }
 
     @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE}, produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
-    @Operation(summary = "Adds a Book", description = "Adds a Book ", tags = {"books"},
+    @Operation(summary = "Adds a Book", description = "Adds a Book ", tags = {"Book"},
             responses = {
                     @ApiResponse(responseCode = "200", description = "Success", content =
                     @Content(schema = @Schema(implementation =
@@ -83,8 +83,7 @@ public class BookController {
 
     @PutMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE}, produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     @Operation(summary = "Updates a Book", description = "Updates a Book ",
-            tags =
-                    {"books"},
+            tags = {"Book"},
             responses = {
                     @ApiResponse(responseCode = "200", description = "Updated",
                             content =
@@ -103,7 +102,7 @@ public class BookController {
 
     @DeleteMapping(value = "/{id}")
     @Operation(summary = "Deletes a Book", description = "Deletes a Book ",
-            tags = {"books"},
+            tags = {"Book"},
             responses = {
                     @ApiResponse(responseCode = "204", description = "No " +
                             "content", content = @Content),

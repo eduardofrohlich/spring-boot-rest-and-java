@@ -23,13 +23,14 @@ public class User implements UserDetails, Serializable {
     private String userName;
     @Column(name = "full_name")
     private String fullName;
-    @Column
+    @Column(name = "password")
     private String password;
     @Column(name = "account_non_expired")
     private Boolean accountNonExpired;
     @Column(name = "account_non_locked")
     private Boolean accountNonLocked;
-    @Column
+
+    @Column(name = "enabled")
     private Boolean enabled;
 
     @ManyToMany(fetch = FetchType.EAGER) //quando buscar um usuário, já traz as permissões
