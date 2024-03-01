@@ -42,13 +42,34 @@ public class JwtTokenProvider {
     }
 
     public TokenVO createAccessToken(String username, List<String> roles) {
-
         Date now = new Date();
         Date validity = new Date(now.getTime() + validityInMilliseconds); //momento daqui 1 hora
         var accessToken = getAccessToken(username, roles, now, validity);
         var refreshToken = getRefreshToken(username, roles, now);
         return new TokenVO(username, true, now, validity, accessToken, refreshToken);
+    }
 
+    public TokenVO refresh(String refreshToken) {
+        if (refreshToken.contains("Bearer")) {
+            refreshToken = refreshToken.substring("Bearer ".length());
+        }
+        JWTVerifier verifier = JWT.require(algorithm).build(); //se eu nao passar o algoritmo correto, ele nao vai conseguir abrir o token e nao vai valida-lo
+        DecodedJWT decodedJwt = verifier.verify(refreshToken);
+        /*
+        https://jwt.io/
+        encoded refreshToken
+        "roles": [
+            "ADMIN",
+            "MANAGER"
+            ],
+            "iss": "http://localhost:8080",
+            "exp": 1709257530,
+            "iat": 1709253930
+            }
+         */
+        String username = decodedJwt.getSubject();
+        List<String> roles = decodedJwt.getClaim("roles").asList(String.class);
+        return createAccessToken(username, roles);
     }
 
     private String getAccessToken(String username, List<String> roles, Date now, Date validity) {
