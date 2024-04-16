@@ -12,9 +12,9 @@ import java.util.Map;
 @SpringBootApplication
 public class Startup {
 
-	public static void main(String[] args) {
-		SpringApplication.run(Startup.class, args);
-
+    public static void main(String[] args) {
+        SpringApplication.run(Startup.class, args);
+/*
 		//PARA O CASO DE QUERER CADASTRAR UM NOVO USUARIO E GERAR AUTOMATICAMENTE A SENHA CRIPTOGRAFADA
 		Pbkdf2PasswordEncoder pbkdf2Encoder = new Pbkdf2PasswordEncoder("", 8, 185000, Pbkdf2PasswordEncoder.SecretKeyFactoryAlgorithm.PBKDF2WithHmacSHA256);
 
@@ -27,8 +27,6 @@ public class Startup {
 		String result2 = passwordEncoder.encode("admin234");
 		System.out.println("My hash " + result1);
 		System.out.println("My hash " + result2);
-
-
-
-	}
+*/
+    }
 }

@@ -1,9 +1,10 @@
 package br.com.frohlich.integrationtests.controller.withjson;
 
 import br.com.frohlich.configs.TestConfigs;
+import br.com.frohlich.data.vo.v1.security.AccountCredentialsVO;
+import br.com.frohlich.data.vo.v1.security.TokenVO;
 import br.com.frohlich.integrationtests.testcontainers.AbstractIntegrationTest;
 import br.com.frohlich.integrationtests.vo.PersonVO;
-import io.restassured.RestAssured;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.filter.log.LogDetail;
 import io.restassured.filter.log.RequestLoggingFilter;
@@ -11,11 +12,14 @@ import io.restassured.filter.log.ResponseLoggingFilter;
 import io.restassured.specification.RequestSpecification;
 import org.junit.jupiter.api.*;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.testcontainers.shaded.com.fasterxml.jackson.core.JsonProcessingException;
 import org.testcontainers.shaded.com.fasterxml.jackson.databind.DeserializationFeature;
+import org.testcontainers.shaded.com.fasterxml.jackson.databind.JsonMappingException;
 import org.testcontainers.shaded.com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
 
+import static io.restassured.RestAssured.given;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
@@ -41,22 +45,44 @@ public class PersonControllerJsonTest extends AbstractIntegrationTest {
         objectMapper = new ObjectMapper();
         objectMapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
 
-        person = new PersonVO();
-    }
-
-    @Test
-    @Order(1)
-    public void testCreate() throws IOException {
-        mockPerson();
         specification = new RequestSpecBuilder()
-                .addHeader(TestConfigs.HEADER_PARAM_ORIGIN, TestConfigs.ORIGIN_ERUDIO)
                 .setBasePath("/api/person/v1")
                 .setPort(TestConfigs.SERVER_PORT)
                 .addFilter(new RequestLoggingFilter(LogDetail.ALL))
                 .addFilter(new ResponseLoggingFilter(LogDetail.ALL))
                 .build();
 
-        var content = RestAssured.given().spec(specification).contentType(TestConfigs.CONTENT_TYPE_JSON)
+        person = new PersonVO();
+    }
+
+    @Test
+    @Order(0)
+    public void authorization() throws JsonMappingException, JsonProcessingException {
+        AccountCredentialsVO user = new AccountCredentialsVO("leandro", "admin123");
+        //access token
+        var token = given().basePath("/auth/signin").port(TestConfigs.SERVER_PORT)
+                .contentType(TestConfigs.CONTENT_TYPE_JSON)
+                .spec(specification).contentType(TestConfigs.CONTENT_TYPE_JSON)
+                .body(user)
+                .when()
+                .post()
+                .then()
+                .statusCode(200)
+                .extract()
+                .body()
+                .as(TokenVO.class)
+                .getToken();
+
+        specification.header(TestConfigs.HEADER_PARAM_AUTHORIZATION, "Bearer " + token);
+    }
+
+    @Test
+    @Order(1)
+    public void testCreate() throws IOException {
+        mockPerson();
+
+        var content = given().spec(specification).contentType(TestConfigs.CONTENT_TYPE_JSON)
+                .header(TestConfigs.HEADER_PARAM_AUTHORIZATION, TestConfigs.ORIGIN_ERUDIO) //authorization vem do header no postman
                 .body(person)
                 .when()
                 .post()
@@ -87,17 +113,12 @@ public class PersonControllerJsonTest extends AbstractIntegrationTest {
 
     @Test
     @Order(2)
-    public void testCreateWithWrongOrigin() throws IOException {
+    public void testCreateWithWrongOrigin() throws JsonMappingException, JsonProcessingException {
         mockPerson();
-        specification = new RequestSpecBuilder()
-                .addHeader(TestConfigs.HEADER_PARAM_ORIGIN, TestConfigs.ORIGIN_SEMERU)
-                .setBasePath("/api/person/v1")
-                .setPort(TestConfigs.SERVER_PORT)
-                .addFilter(new RequestLoggingFilter(LogDetail.ALL))
-                .addFilter(new ResponseLoggingFilter(LogDetail.ALL))
-                .build();
 
-        var content = RestAssured.given().spec(specification).contentType(TestConfigs.CONTENT_TYPE_JSON)
+
+        var content = given().spec(specification).contentType(TestConfigs.CONTENT_TYPE_JSON)
+                .header(TestConfigs.HEADER_PARAM_AUTHORIZATION, TestConfigs.ORIGIN_SEMERU) //authorization vem do header no postman
                 .body(person)
                 .when()
                 .post()
@@ -116,15 +137,9 @@ public class PersonControllerJsonTest extends AbstractIntegrationTest {
     @Order(3)
     public void testFindById() throws IOException {
         mockPerson();
-        specification = new RequestSpecBuilder()
-                .addHeader(TestConfigs.HEADER_PARAM_ORIGIN, TestConfigs.ORIGIN_ERUDIO)
-                .setBasePath("/api/person/v1")
-                .setPort(TestConfigs.SERVER_PORT)
-                .addFilter(new RequestLoggingFilter(LogDetail.ALL))
-                .addFilter(new ResponseLoggingFilter(LogDetail.ALL))
-                .build();
 
-        var content = RestAssured.given().spec(specification).contentType(TestConfigs.CONTENT_TYPE_JSON)
+        var content = given().spec(specification).contentType(TestConfigs.CONTENT_TYPE_JSON)
+                .header(TestConfigs.HEADER_PARAM_AUTHORIZATION, TestConfigs.ORIGIN_ERUDIO) //authorization vem do header no postman\
                 .pathParam("id", person.getId())
                 .when()
                 .get("/{id}")
@@ -151,19 +166,15 @@ public class PersonControllerJsonTest extends AbstractIntegrationTest {
         assertEquals("New York City, New York, US", persistedPerson.getAddress());
         assertEquals("Male", persistedPerson.getGender());
     }
+
     @Test
     @Order(4)
-    public void testFindByIdWithWrongOrigin() throws IOException {
+    public void testFindByIdWithWrongOrigin() throws JsonMappingException, JsonProcessingException {
         mockPerson();
-        specification = new RequestSpecBuilder()
-                .addHeader(TestConfigs.HEADER_PARAM_ORIGIN, TestConfigs.ORIGIN_SEMERU)
-                .setBasePath("/api/person/v1")
-                .setPort(TestConfigs.SERVER_PORT)
-                .addFilter(new RequestLoggingFilter(LogDetail.ALL))
-                .addFilter(new ResponseLoggingFilter(LogDetail.ALL))
-                .build();
 
-        var content = RestAssured.given().spec(specification).contentType(TestConfigs.CONTENT_TYPE_JSON)
+        var content = given().spec(specification)
+                .contentType(TestConfigs.CONTENT_TYPE_JSON)
+                .header(TestConfigs.HEADER_PARAM_AUTHORIZATION, TestConfigs.ORIGIN_SEMERU) //authorization vem do header no postman
                 .pathParam("id", person.getId())
                 .when()
                 .get("/{id}")
