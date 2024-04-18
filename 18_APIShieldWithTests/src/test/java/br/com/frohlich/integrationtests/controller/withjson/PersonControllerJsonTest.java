@@ -30,15 +30,7 @@ public class PersonControllerJsonTest extends AbstractIntegrationTest {
     private static ObjectMapper objectMapper;
     private static PersonVO person;
 
-    //settar os 3 valores antes dos testes serem inicializados
-//(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES) -> ignorar propriedades desconhecidas,
-// exemplo para ignorarar:
-// "links": [
-//            {
-//                "rel": "self",
-//                "href": "http://localhost:8080/api/person/v1/2"
-//            }
-//        ]
+
     @BeforeAll
     public static void setUp() {
         //
@@ -62,7 +54,6 @@ public class PersonControllerJsonTest extends AbstractIntegrationTest {
         //access token
         var token = given().basePath("/auth/signin").port(TestConfigs.SERVER_PORT)
                 .contentType(TestConfigs.CONTENT_TYPE_JSON)
-                .spec(specification).contentType(TestConfigs.CONTENT_TYPE_JSON)
                 .body(user)
                 .when()
                 .post()
@@ -81,8 +72,9 @@ public class PersonControllerJsonTest extends AbstractIntegrationTest {
     public void testCreate() throws IOException {
         mockPerson();
 
-        var content = given().spec(specification).contentType(TestConfigs.CONTENT_TYPE_JSON)
-                .header(TestConfigs.HEADER_PARAM_AUTHORIZATION, TestConfigs.ORIGIN_ERUDIO) //authorization vem do header no postman
+        var content = given().spec(specification)
+                .contentType(TestConfigs.CONTENT_TYPE_JSON)
+                .header(TestConfigs.HEADER_PARAM_ORIGIN, TestConfigs.ORIGIN_ERUDIO) //authorization vem do header no postman
                 .body(person)
                 .when()
                 .post()
@@ -116,9 +108,8 @@ public class PersonControllerJsonTest extends AbstractIntegrationTest {
     public void testCreateWithWrongOrigin() throws JsonMappingException, JsonProcessingException {
         mockPerson();
 
-
         var content = given().spec(specification).contentType(TestConfigs.CONTENT_TYPE_JSON)
-                .header(TestConfigs.HEADER_PARAM_AUTHORIZATION, TestConfigs.ORIGIN_SEMERU) //authorization vem do header no postman
+                .header(TestConfigs.HEADER_PARAM_ORIGIN, TestConfigs.ORIGIN_SEMERU) //authorization vem do header no postman
                 .body(person)
                 .when()
                 .post()
@@ -139,7 +130,7 @@ public class PersonControllerJsonTest extends AbstractIntegrationTest {
         mockPerson();
 
         var content = given().spec(specification).contentType(TestConfigs.CONTENT_TYPE_JSON)
-                .header(TestConfigs.HEADER_PARAM_AUTHORIZATION, TestConfigs.ORIGIN_ERUDIO) //authorization vem do header no postman\
+                .header(TestConfigs.HEADER_PARAM_ORIGIN, TestConfigs.ORIGIN_ERUDIO) //authorization vem do header no postman\
                 .pathParam("id", person.getId())
                 .when()
                 .get("/{id}")
@@ -174,7 +165,7 @@ public class PersonControllerJsonTest extends AbstractIntegrationTest {
 
         var content = given().spec(specification)
                 .contentType(TestConfigs.CONTENT_TYPE_JSON)
-                .header(TestConfigs.HEADER_PARAM_AUTHORIZATION, TestConfigs.ORIGIN_SEMERU) //authorization vem do header no postman
+                .header(TestConfigs.HEADER_PARAM_ORIGIN, TestConfigs.ORIGIN_SEMERU) //authorization vem do header no postman
                 .pathParam("id", person.getId())
                 .when()
                 .get("/{id}")
