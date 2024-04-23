@@ -1,8 +1,8 @@
 package br.com.frohlich.integrationtests.controller.withjson;
 
 import br.com.frohlich.configs.TestConfigs;
-import br.com.frohlich.data.vo.v1.security.AccountCredentialsVO;
-import br.com.frohlich.data.vo.v1.security.TokenVO;
+import br.com.frohlich.integrationtests.vo.AccountCredentialsVO;
+import br.com.frohlich.integrationtests.vo.TokenVO;
 import br.com.frohlich.integrationtests.testcontainers.AbstractIntegrationTest;
 import br.com.frohlich.integrationtests.vo.PersonVO;
 import io.restassured.builder.RequestSpecBuilder;
