@@ -10,17 +10,17 @@ import org.hibernate.boot.jaxb.hbm.internal.RepresentationModeConverter;
 import org.springframework.hateoas.RepresentationModel;
 import org.springframework.web.bind.annotation.Mapping;
 
-@JsonPropertyOrder({"id", "first_name", "last_name", "address", "gender"})
+@JsonPropertyOrder({"id", "firstName", "lastName", "address", "gender"})
 public class PersonVO extends RepresentationModel<PersonVO> implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     @JsonProperty("id")
     private Long key;
-    @JsonProperty("first_name")
+    @JsonProperty("firstName")
     private String firstName;
 
-    @JsonProperty("last_name")
+    @JsonProperty("lastName")
     private String lastName;
     private String address;
 

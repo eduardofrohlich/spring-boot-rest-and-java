@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.*;
 import br.com.frohlich.data.vo.v1.PersonVO;
 import br.com.frohlich.services.PersonServices;
 
-//@CrossOrigin
 @RestController
 @RequestMapping("/api/person/v1")
 @Tag(name = "People", description = "API Endpoint for People Management")

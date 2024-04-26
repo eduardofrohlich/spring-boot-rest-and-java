@@ -1,10 +1,10 @@
-package br.com.frohlich.integrationtests.controller.withjson;
+package br.com.frohlich.integrationtests.controller.cors.withjson;
 
 import br.com.frohlich.configs.TestConfigs;
-import br.com.frohlich.integrationtests.testcontainers.AbstractIntegrationTest;
 import br.com.frohlich.integrationtests.vo.AccountCredentialsVO;
-import br.com.frohlich.integrationtests.vo.PersonVO;
 import br.com.frohlich.integrationtests.vo.TokenVO;
+import br.com.frohlich.integrationtests.testcontainers.AbstractIntegrationTest;
+import br.com.frohlich.integrationtests.vo.PersonVO;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.filter.log.LogDetail;
 import io.restassured.filter.log.RequestLoggingFilter;
@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class PersonControllerJsonTest extends AbstractIntegrationTest {
+public class PersonControllerCorsJsonTest extends AbstractIntegrationTest {
 
     private static RequestSpecification specification;
     private static ObjectMapper objectMapper;
@@ -33,6 +33,7 @@ public class PersonControllerJsonTest extends AbstractIntegrationTest {
 
     @BeforeAll
     public static void setUp() {
+        //
         objectMapper = new ObjectMapper();
         objectMapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
 
@@ -72,6 +73,7 @@ public class PersonControllerJsonTest extends AbstractIntegrationTest {
 
         var content = given().spec(specification)
                 .contentType(TestConfigs.CONTENT_TYPE_JSON)
+                .header(TestConfigs.HEADER_PARAM_ORIGIN, TestConfigs.ORIGIN_ERUDIO) //authorization vem do header no postman
                 .body(person)
                 .when()
                 .post()
@@ -100,39 +102,24 @@ public class PersonControllerJsonTest extends AbstractIntegrationTest {
 
     }
 
-
     @Test
     @Order(2)
-    public void testUpdate() throws IOException {
-        person.setLastName("Torvalds");
+    public void testCreateWithWrongOrigin() throws JsonMappingException, JsonProcessingException {
+        mockPerson();
 
-        var content = given().spec(specification)
-                .contentType(TestConfigs.CONTENT_TYPE_JSON)
+        var content = given().spec(specification).contentType(TestConfigs.CONTENT_TYPE_JSON)
+                .header(TestConfigs.HEADER_PARAM_ORIGIN, TestConfigs.ORIGIN_SEMERU) //authorization vem do header no postman
                 .body(person)
                 .when()
                 .post()
                 .then()
-                .statusCode(200)
+                .statusCode(403)
                 .extract()
                 .body()
                 .asString();
 
-        PersonVO persistedPerson = objectMapper.readValue(content, PersonVO.class);
-        person = persistedPerson;
-
-        assertNotNull(persistedPerson);
-        assertNotNull(persistedPerson.getId());
-        assertNotNull(persistedPerson.getAddress());
-        assertNotNull(persistedPerson.getFirstName());
-        assertNotNull(persistedPerson.getLastName());
-        assertNotNull(persistedPerson.getGender());
-
-        assertEquals(person.getId(), persistedPerson.getId());
-
-        assertEquals("Richard", persistedPerson.getFirstName());
-        assertEquals("Torvalds", persistedPerson.getLastName());
-        assertEquals("New York City, New York, US", persistedPerson.getAddress());
-        assertEquals("Male", persistedPerson.getGender());
+        assertNotNull(content);
+        assertEquals("Invalid CORS request", content);
 
     }
 
@@ -141,11 +128,11 @@ public class PersonControllerJsonTest extends AbstractIntegrationTest {
     public void testFindById() throws IOException {
         mockPerson();
 
-        var content = given().spec(specification)
-                .contentType(TestConfigs.CONTENT_TYPE_JSON)
+        var content = given().spec(specification).contentType(TestConfigs.CONTENT_TYPE_JSON)
+                .header(TestConfigs.HEADER_PARAM_ORIGIN, TestConfigs.ORIGIN_ERUDIO) //authorization vem do header no postman\
                 .pathParam("id", person.getId())
                 .when()
-                .get("{id}")
+                .get("/{id}")
                 .then()
                 .statusCode(200)
                 .extract()
@@ -156,19 +143,39 @@ public class PersonControllerJsonTest extends AbstractIntegrationTest {
         person = persistedPerson;
 
         assertNotNull(persistedPerson);
-
         assertNotNull(persistedPerson.getId());
+        assertNotNull(persistedPerson.getAddress());
         assertNotNull(persistedPerson.getFirstName());
         assertNotNull(persistedPerson.getLastName());
-        assertNotNull(persistedPerson.getAddress());
         assertNotNull(persistedPerson.getGender());
 
-        assertEquals(person.getId(), persistedPerson.getId());
+        assertTrue(persistedPerson.getId() > 0);
 
         assertEquals("Richard", persistedPerson.getFirstName());
-        assertEquals("Torvalds", persistedPerson.getLastName());
+        assertEquals("Stallman", persistedPerson.getLastName());
         assertEquals("New York City, New York, US", persistedPerson.getAddress());
         assertEquals("Male", persistedPerson.getGender());
+    }
+
+    @Test
+    @Order(4)
+    public void testFindByIdWithWrongOrigin() throws JsonMappingException, JsonProcessingException {
+        mockPerson();
+
+        var content = given().spec(specification)
+                .contentType(TestConfigs.CONTENT_TYPE_JSON)
+                .header(TestConfigs.HEADER_PARAM_ORIGIN, TestConfigs.ORIGIN_SEMERU) //authorization vem do header no postman
+                .pathParam("id", person.getId())
+                .when()
+                .get("/{id}")
+                .then()
+                .statusCode(403)
+                .extract()
+                .body()
+                .asString();
+
+        assertNotNull(content);
+        assertEquals("Invalid CORS request", content);
     }
 
     private void mockPerson() {
