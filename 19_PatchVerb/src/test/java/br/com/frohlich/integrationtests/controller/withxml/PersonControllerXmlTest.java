@@ -5,19 +5,18 @@ import br.com.frohlich.integrationtests.testcontainers.AbstractIntegrationTest;
 import br.com.frohlich.integrationtests.vo.AccountCredentialsVO;
 import br.com.frohlich.integrationtests.vo.PersonVO;
 import br.com.frohlich.integrationtests.vo.TokenVO;
-
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.filter.log.LogDetail;
 import io.restassured.filter.log.RequestLoggingFilter;
 import io.restassured.filter.log.ResponseLoggingFilter;
 import io.restassured.specification.RequestSpecification;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.core.JsonProcessingException;
-
 import org.junit.jupiter.api.*;
 import org.springframework.boot.test.context.SpringBootTest;
-import com.fasterxml.jackson.core.type.TypeReference;import com.fasterxml.jackson.databind.DeserializationFeature;
 
 import java.io.IOException;
 import java.util.List;
@@ -94,6 +93,7 @@ public class PersonControllerXmlTest extends AbstractIntegrationTest {
         assertNotNull(foundPersonOne.getFirstName());
         assertNotNull(foundPersonOne.getLastName());
         assertNotNull(foundPersonOne.getGender());
+        assertTrue(foundPersonOne.getEnabled());
 
         assertTrue(foundPersonOne.getId() > 0);
 
@@ -131,6 +131,7 @@ public class PersonControllerXmlTest extends AbstractIntegrationTest {
         assertNotNull(foundPersonOne.getFirstName());
         assertNotNull(foundPersonOne.getLastName());
         assertNotNull(foundPersonOne.getGender());
+        assertTrue(foundPersonOne.getEnabled());
 
         assertEquals(person.getId(), foundPersonOne.getId());
 
@@ -143,6 +144,42 @@ public class PersonControllerXmlTest extends AbstractIntegrationTest {
 
     @Test
     @Order(3)
+    public void testDisablePersonById() throws IOException {
+        var content = given().spec(specification)
+                .contentType(TestConfigs.CONTENT_TYPE_XML)
+                .accept(TestConfigs.CONTENT_TYPE_XML)
+                .pathParam("id", person.getId())
+                .when()
+                .patch("{id}")
+                .then()
+                .statusCode(200)
+                .extract()
+                .body()
+                .asString();
+
+        PersonVO foundPersonOne = objectMapper.readValue(content, PersonVO.class);
+        person = foundPersonOne;
+
+        assertNotNull(foundPersonOne);
+
+        assertNotNull(foundPersonOne.getId());
+        assertNotNull(foundPersonOne.getFirstName());
+        assertNotNull(foundPersonOne.getLastName());
+        assertNotNull(foundPersonOne.getAddress());
+        assertNotNull(foundPersonOne.getGender());
+        assertFalse(foundPersonOne.getEnabled());
+
+
+        assertEquals(person.getId(), foundPersonOne.getId());
+
+        assertEquals("Richard", foundPersonOne.getFirstName());
+        assertEquals("Torvalds", foundPersonOne.getLastName());
+        assertEquals("New York City, New York, US", foundPersonOne.getAddress());
+        assertEquals("Male", foundPersonOne.getGender());
+    }
+
+    @Test
+    @Order(4)
     public void testFindById() throws IOException {
         mockPerson();
 
@@ -168,6 +205,7 @@ public class PersonControllerXmlTest extends AbstractIntegrationTest {
         assertNotNull(foundPersonOne.getLastName());
         assertNotNull(foundPersonOne.getAddress());
         assertNotNull(foundPersonOne.getGender());
+        assertFalse(foundPersonOne.getEnabled());
 
         assertEquals(person.getId(), foundPersonOne.getId());
 
@@ -178,7 +216,7 @@ public class PersonControllerXmlTest extends AbstractIntegrationTest {
     }
 
     @Test
-    @Order(4)
+    @Order(5)
     public void testDelete() throws IOException {
         given().spec(specification)
                 .contentType(TestConfigs.CONTENT_TYPE_XML)
@@ -191,7 +229,7 @@ public class PersonControllerXmlTest extends AbstractIntegrationTest {
     }
 
     @Test
-    @Order(5)
+    @Order(6)
     public void testFindAll() throws IOException {
 
         var content = given().spec(specification)
@@ -205,10 +243,11 @@ public class PersonControllerXmlTest extends AbstractIntegrationTest {
                 .body()
                 .asString();
 
-        List<PersonVO> people = objectMapper.readValue(content, new TypeReference<List<PersonVO>>() {});
+        List<PersonVO> people = objectMapper.readValue(content, new TypeReference<List<PersonVO>>() {
+        });
 
 
-        PersonVO foundPersonOne = people.get(0);
+        PersonVO foundPersonOne = people.getFirst();
         person = foundPersonOne;
 
         assertNotNull(foundPersonOne.getId());
@@ -216,6 +255,7 @@ public class PersonControllerXmlTest extends AbstractIntegrationTest {
         assertNotNull(foundPersonOne.getFirstName());
         assertNotNull(foundPersonOne.getLastName());
         assertNotNull(foundPersonOne.getGender());
+        assertTrue(foundPersonOne.getEnabled());
 
         assertEquals(2, foundPersonOne.getId());
 
@@ -232,6 +272,8 @@ public class PersonControllerXmlTest extends AbstractIntegrationTest {
         assertNotNull(foundPersonThree.getFirstName());
         assertNotNull(foundPersonThree.getLastName());
         assertNotNull(foundPersonThree.getGender());
+        assertTrue(foundPersonThree.getEnabled());
+
 
         assertEquals(4, foundPersonThree.getId());
 
@@ -243,7 +285,7 @@ public class PersonControllerXmlTest extends AbstractIntegrationTest {
     }
 
     @Test
-    @Order(6)
+    @Order(7)
     public void testFindAllWithoutToken() throws IOException {
 
         RequestSpecification specificationWithoutToken = new RequestSpecBuilder()
@@ -269,6 +311,7 @@ public class PersonControllerXmlTest extends AbstractIntegrationTest {
         person.setLastName("Stallman");
         person.setAddress("New York City, New York, US");
         person.setGender("Male");
+        person.setEnabled(true);
     }
 }
 

@@ -250,6 +250,7 @@ public class PersonControllerJsonTest extends AbstractIntegrationTest {
         assertNotNull(foundPersonOne.getFirstName());
         assertNotNull(foundPersonOne.getLastName());
         assertNotNull(foundPersonOne.getGender());
+        assertTrue(foundPersonOne.getEnabled());
 
         assertEquals(2, foundPersonOne.getId());
 
@@ -257,6 +258,8 @@ public class PersonControllerJsonTest extends AbstractIntegrationTest {
         assertEquals("da Vinci", foundPersonOne.getLastName());
         assertEquals("Anchiano - Italy", foundPersonOne.getAddress());
         assertEquals("Male", foundPersonOne.getGender());
+
+
 
         PersonVO foundPersonThree = people.get(2);
         person = foundPersonThree;
@@ -266,6 +269,7 @@ public class PersonControllerJsonTest extends AbstractIntegrationTest {
         assertNotNull(foundPersonThree.getFirstName());
         assertNotNull(foundPersonThree.getLastName());
         assertNotNull(foundPersonThree.getGender());
+        assertTrue(foundPersonThree.getEnabled());
 
         assertEquals(4, foundPersonThree.getId());
 
