@@ -1,7 +1,8 @@
 package br.com.frohlich.controllers;
 
-import java.util.List;
-
+import br.com.frohlich.data.vo.v1.PersonVO;
+import br.com.frohlich.services.PersonServices;
+import br.com.frohlich.util.MediaType;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -9,12 +10,10 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
-import br.com.frohlich.util.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import br.com.frohlich.data.vo.v1.PersonVO;
-import br.com.frohlich.services.PersonServices;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/person/v1")
@@ -104,6 +103,24 @@ public class PersonController {
         return service.update(person);
     }
 
+    @PatchMapping(value = "/{id}", produces = {MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.APPLICATION_YML})
+    @Operation(summary = "Disables a Person by id", description = "Disables a Person by id", tags = {"People"},
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Success", content =
+                    @Content(schema = @Schema(implementation =
+                            PersonVO.class))
+                    ),
+                    @ApiResponse(responseCode = "204", description = "No content"),
+                    @ApiResponse(responseCode = "400", description = "Bad Request"),
+                    @ApiResponse(responseCode = "401", description = "Unauthorized"),
+                    @ApiResponse(responseCode = "404", description = "Not found"),
+                    @ApiResponse(responseCode = "500", description = "Internal error"),
+            }
+    )
+    public PersonVO disablePerson(@PathVariable(value = "id") Long id) throws Exception {
+        return service.disablePerson(id);
+    }
+
     @DeleteMapping(value = "/{id}")
     @Operation(summary = "Deletes a Person", description = "Deletes a Person ",
             tags = {"People"},
@@ -122,7 +139,7 @@ public class PersonController {
     )
     public ResponseEntity<?> delete(@PathVariable(value = "id") Long id) {
         service.delete(id);
-        return ResponseEntity.noContent().build(); //return 204 code
+        return ResponseEntity.noContent().build(); //returns 204 code
     }
 
 }
