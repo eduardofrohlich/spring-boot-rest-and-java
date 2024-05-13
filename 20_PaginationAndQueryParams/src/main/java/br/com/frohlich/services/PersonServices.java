@@ -8,10 +8,11 @@ import br.com.frohlich.mapper.DozerMapper;
 import br.com.frohlich.model.Person;
 import br.com.frohlich.repositories.PersonRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.logging.Logger;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
@@ -25,18 +26,23 @@ public class PersonServices {
     @Autowired
     PersonRepository repository;
 
-    public List<PersonVO> findAll() {
+    public Page<PersonVO> findAll(Pageable pageable) {
         logger.info("Finding all people!");
-        var people = DozerMapper.parseListObjects(repository.findAll(),
-                PersonVO.class);
-        people.stream().forEach(p -> {
+
+        var personPage = repository.findAll(pageable); //returns a Page
+
+        var personVosPage = personPage.map(p -> DozerMapper.parseObject(p, PersonVO.class));
+
+        personVosPage.map(p -> {
             try {
                 p.add(linkTo(methodOn(PersonController.class).findById(p.getKey())).withSelfRel());
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
+            return p;
         });
-        return people;
+
+        return personVosPage;
     }
 
     public PersonVO findById(Long id) throws Exception {
