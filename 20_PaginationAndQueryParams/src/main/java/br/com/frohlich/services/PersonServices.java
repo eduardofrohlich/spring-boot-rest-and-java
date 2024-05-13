@@ -8,8 +8,11 @@ import br.com.frohlich.mapper.DozerMapper;
 import br.com.frohlich.model.Person;
 import br.com.frohlich.repositories.PersonRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PagedResourcesAssembler;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.Link;
+import org.springframework.hateoas.PagedModel;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,7 +29,10 @@ public class PersonServices {
     @Autowired
     PersonRepository repository;
 
-    public Page<PersonVO> findAll(Pageable pageable) {
+    @Autowired
+    PagedResourcesAssembler<PersonVO> assembler;
+
+    public PagedModel<EntityModel<PersonVO>> findAll(Pageable pageable) {
         logger.info("Finding all people!");
 
         var personPage = repository.findAll(pageable); //returns a Page
@@ -42,7 +48,12 @@ public class PersonServices {
             return p;
         });
 
-        return personVosPage;
+        Link link = linkTo(
+                methodOn(PersonController.class)
+                        .findAll(pageable.getPageNumber(),
+                                pageable.getPageSize(),
+                                "asc")).withSelfRel();
+        return assembler.toModel(personVosPage, link);
     }
 
     public PersonVO findById(Long id) throws Exception {
