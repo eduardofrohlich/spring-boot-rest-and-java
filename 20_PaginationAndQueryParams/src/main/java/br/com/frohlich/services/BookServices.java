@@ -8,9 +8,13 @@ import br.com.frohlich.mapper.DozerMapper;
 import br.com.frohlich.model.Book;
 import br.com.frohlich.repositories.BookRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PagedResourcesAssembler;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.Link;
+import org.springframework.hateoas.PagedModel;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.logging.Logger;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
@@ -24,18 +28,28 @@ public class BookServices {
     @Autowired
     BookRepository repository;
 
-    public List<BookVO> findAll() {
+    @Autowired
+    PagedResourcesAssembler<BookVO> assembler;
+
+    public PagedModel<EntityModel<BookVO>> findAll(Pageable pageable) {
         logger.info("Finding all books!");
-        var books = DozerMapper.parseListObjects(repository.findAll(),
-                BookVO.class);
-        books.stream().forEach(p -> {
+
+        var bookPage = repository.findAll(pageable);
+        var bookVosPage = bookPage.map(p -> DozerMapper.parseObject(p, BookVO.class));
+        bookVosPage.map(p -> {
             try {
                 p.add(linkTo(methodOn(BookController.class).findById(p.getKey())).withSelfRel());
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
+            return p;
         });
-        return books;
+        Link link = linkTo(
+                methodOn(BookController.class)
+                        .findAll(pageable.getPageNumber(),
+                                pageable.getPageSize(),
+                                "asc")).withSelfRel();
+        return assembler.toModel(bookVosPage, link);
     }
 
     public BookVO findById(Long id) throws Exception {
@@ -50,7 +64,7 @@ public class BookServices {
 
     public BookVO create(BookVO book) throws Exception {
 
-        if (book == null ) throw new RequiredObjectIsNullException();
+        if (book == null) throw new RequiredObjectIsNullException();
 
         logger.info("Creating one book!");
         var entity = DozerMapper.parseObject(book, Book.class);
@@ -61,7 +75,7 @@ public class BookServices {
 
     public BookVO update(BookVO book) throws Exception {
 
-        if (book == null ) throw new RequiredObjectIsNullException();
+        if (book == null) throw new RequiredObjectIsNullException();
 
         logger.info("Updating one Book!");
         var entity = repository.findById(book.getKey())
