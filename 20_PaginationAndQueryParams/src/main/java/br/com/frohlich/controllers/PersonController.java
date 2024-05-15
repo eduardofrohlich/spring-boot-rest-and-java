@@ -27,6 +27,37 @@ public class PersonController {
     @Autowired
     private PersonServices service;
 
+    @GetMapping(value = "/findPeopleByName/{firstName}",
+            produces = {MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.APPLICATION_YML})
+    @Operation(summary = "Find people by name", description = "Find people by name", tags = {"People"},
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Success",
+                            content = {
+                                    @Content(
+                                            mediaType = "application/json",
+                                            array = @ArraySchema(schema =
+                                            @Schema(implementation = PersonVO.class))
+                                    )
+                            }),
+                    @ApiResponse(responseCode = "400", description = "Bad Request"),
+                    @ApiResponse(responseCode = "401", description = "Unauthorized"),
+                    @ApiResponse(responseCode = "404", description = "Not found"),
+                    @ApiResponse(responseCode = "500", description = "Internal error"),
+            }
+    )
+    public ResponseEntity<PagedModel<EntityModel<PersonVO>>> findPeopleByName(
+            @PathVariable(value = "firstName") String firstName,
+            @RequestParam(value = "page", defaultValue = "0") Integer page,
+            @RequestParam(value = "size", defaultValue = "12") Integer size,
+            @RequestParam(value = "direction", defaultValue = "asc") String direction
+    ) {
+        var sortDirection = "desc".equalsIgnoreCase(direction) ? Sort.Direction.DESC : Sort.Direction.ASC;
+
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sortDirection, "firstName")); //1st models's attribute
+        return ResponseEntity.ok(service.findPeopleByName(firstName, pageable));
+    }
+
+
     @GetMapping(produces = {MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.APPLICATION_YML})
     @Operation(summary = "Find all people", description = "Find all people", tags = {"People"},
             responses = {
@@ -53,6 +84,7 @@ public class PersonController {
         Pageable pageable = PageRequest.of(page, size, Sort.by(sortDirection, "firstName")); //1st models's attribute
         return ResponseEntity.ok(service.findAll(pageable));
     }
+
 
     @CrossOrigin(origins = "http://localhost:8080")
     @GetMapping(value = "/{id}", produces = {MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.APPLICATION_YML})
