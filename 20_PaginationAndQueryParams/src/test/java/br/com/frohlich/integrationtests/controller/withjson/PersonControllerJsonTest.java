@@ -5,6 +5,7 @@ import br.com.frohlich.integrationtests.testcontainers.AbstractIntegrationTest;
 import br.com.frohlich.integrationtests.vo.AccountCredentialsVO;
 import br.com.frohlich.integrationtests.vo.PersonVO;
 import br.com.frohlich.integrationtests.vo.TokenVO;
+import br.com.frohlich.integrationtests.vo.wrappers.WrapperPersonVO;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.filter.log.LogDetail;
 import io.restassured.filter.log.RequestLoggingFilter;
@@ -13,13 +14,11 @@ import io.restassured.specification.RequestSpecification;
 import org.junit.jupiter.api.*;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.testcontainers.shaded.com.fasterxml.jackson.core.JsonProcessingException;
-import org.testcontainers.shaded.com.fasterxml.jackson.core.type.TypeReference;
 import org.testcontainers.shaded.com.fasterxml.jackson.databind.DeserializationFeature;
 import org.testcontainers.shaded.com.fasterxml.jackson.databind.JsonMappingException;
 import org.testcontainers.shaded.com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
-import java.util.List;
 
 import static io.restassured.RestAssured.given;
 import static org.junit.jupiter.api.Assertions.*;
@@ -238,8 +237,8 @@ public class PersonControllerJsonTest extends AbstractIntegrationTest {
                 .body()
                 .asString();
 
-        List<PersonVO> people = objectMapper.readValue(content, new TypeReference<List<PersonVO>>() {
-        });
+        WrapperPersonVO wrapper = objectMapper.readValue(content, WrapperPersonVO.class);
+        var people = wrapper.getEmbedded().getPeople();
 
 
         PersonVO foundPersonOne = people.getFirst();
@@ -258,7 +257,6 @@ public class PersonControllerJsonTest extends AbstractIntegrationTest {
         assertEquals("da Vinci", foundPersonOne.getLastName());
         assertEquals("Anchiano - Italy", foundPersonOne.getAddress());
         assertEquals("Male", foundPersonOne.getGender());
-
 
 
         PersonVO foundPersonThree = people.get(2);
@@ -300,7 +298,6 @@ public class PersonControllerJsonTest extends AbstractIntegrationTest {
                 .body()
                 .asString();
     }
-
 
 
     private void mockPerson() {
