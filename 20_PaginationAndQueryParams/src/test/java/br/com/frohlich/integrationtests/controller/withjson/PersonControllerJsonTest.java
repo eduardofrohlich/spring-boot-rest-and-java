@@ -253,10 +253,7 @@ public class PersonControllerJsonTest extends AbstractIntegrationTest {
         assertNotNull(foundPersonOne.getGender());
         assertFalse(foundPersonOne.getEnabled());
 
-
-        System.out.println(foundPersonOne.getFirstName());
         assertEquals(602, foundPersonOne.getId());
-
         assertEquals("Alanah", foundPersonOne.getFirstName());
         assertEquals("Hulke", foundPersonOne.getLastName());
         assertEquals("9 Melody Road", foundPersonOne.getAddress());

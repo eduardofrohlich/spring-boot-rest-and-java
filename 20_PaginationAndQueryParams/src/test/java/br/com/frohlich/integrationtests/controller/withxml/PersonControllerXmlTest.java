@@ -229,6 +229,44 @@ public class PersonControllerXmlTest extends AbstractIntegrationTest {
 
     @Test
     @Order(6)
+    public void testFindByName() throws IOException {
+
+        var content = given().spec(specification)
+                .contentType(TestConfigs.CONTENT_TYPE_XML)
+                .accept(TestConfigs.CONTENT_TYPE_XML)
+                .pathParam("firstName", "ana")
+                .queryParam("page", 0, "size", 6, "direction", "ASC")
+                .when()
+                .get("findPeopleByName/{firstName}")
+                .then()
+                .statusCode(200)
+                .extract()
+                .body()
+                .asString();
+
+        PagedModelPerson wrapper = objectMapper.readValue(content, PagedModelPerson.class);
+        var people = wrapper.getContent();
+
+        PersonVO foundPersonOne = people.getFirst();
+        person = foundPersonOne;
+
+        assertNotNull(foundPersonOne.getId());
+        assertNotNull(foundPersonOne.getAddress());
+        assertNotNull(foundPersonOne.getFirstName());
+        assertNotNull(foundPersonOne.getLastName());
+        assertNotNull(foundPersonOne.getGender());
+        assertFalse(foundPersonOne.getEnabled());
+
+        assertEquals(602, foundPersonOne.getId());
+
+        assertEquals("Alanah", foundPersonOne.getFirstName());
+        assertEquals("Hulke", foundPersonOne.getLastName());
+        assertEquals("9 Melody Road", foundPersonOne.getAddress());
+        assertEquals("Female", foundPersonOne.getGender());
+    }
+
+    @Test
+    @Order(8)
     public void testFindAll() throws IOException {
 
         var content = given().spec(specification)
@@ -279,7 +317,6 @@ public class PersonControllerXmlTest extends AbstractIntegrationTest {
         assertEquals("Souten", foundPersonThree.getLastName());
         assertEquals("45163 Fairview Plaza", foundPersonThree.getAddress());
         assertEquals("Female", foundPersonThree.getGender());
-
     }
 
     @Test
