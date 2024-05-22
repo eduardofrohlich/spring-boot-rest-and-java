@@ -225,6 +225,46 @@ public class PersonControllerJsonTest extends AbstractIntegrationTest {
 
     @Test
     @Order(6)
+    public void testFindByName() throws IOException {
+
+        var content = given().spec(specification)
+                .contentType(TestConfigs.CONTENT_TYPE_JSON)
+                .accept(TestConfigs.CONTENT_TYPE_JSON)
+                .pathParam("firstName", "ana")
+                .queryParam("page", 0, "size", 6, "direction", "ASC")
+                .when()
+                .get("findPeopleByName/{firstName}")
+                .then()
+                .statusCode(200)
+                .extract()
+                .body()
+                .asString();
+
+        WrapperPersonVO wrapper = objectMapper.readValue(content, WrapperPersonVO.class);
+        var people = wrapper.getEmbedded().getPeople();
+
+        PersonVO foundPersonOne = people.getFirst();
+        person = foundPersonOne;
+
+        assertNotNull(foundPersonOne.getId());
+        assertNotNull(foundPersonOne.getAddress());
+        assertNotNull(foundPersonOne.getFirstName());
+        assertNotNull(foundPersonOne.getLastName());
+        assertNotNull(foundPersonOne.getGender());
+        assertFalse(foundPersonOne.getEnabled());
+
+
+        System.out.println(foundPersonOne.getFirstName());
+        assertEquals(602, foundPersonOne.getId());
+
+        assertEquals("Alanah", foundPersonOne.getFirstName());
+        assertEquals("Hulke", foundPersonOne.getLastName());
+        assertEquals("9 Melody Road", foundPersonOne.getAddress());
+        assertEquals("Female", foundPersonOne.getGender());
+    }
+
+    @Test
+    @Order(7)
     public void testFindAll() throws IOException {
 
         var content = given().spec(specification)
@@ -280,7 +320,7 @@ public class PersonControllerJsonTest extends AbstractIntegrationTest {
     }
 
     @Test
-    @Order(7)
+    @Order(8)
     public void testFindAllWithoutToken() throws IOException {
 
         RequestSpecification specificationWithoutToken = new RequestSpecBuilder()
