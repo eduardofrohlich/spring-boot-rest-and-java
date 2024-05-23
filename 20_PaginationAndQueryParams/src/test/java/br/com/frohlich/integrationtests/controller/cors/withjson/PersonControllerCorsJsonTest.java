@@ -1,10 +1,10 @@
 package br.com.frohlich.integrationtests.controller.cors.withjson;
 
 import br.com.frohlich.configs.TestConfigs;
-import br.com.frohlich.integrationtests.vo.AccountCredentialsVO;
-import br.com.frohlich.integrationtests.vo.TokenVO;
 import br.com.frohlich.integrationtests.testcontainers.AbstractIntegrationTest;
+import br.com.frohlich.integrationtests.vo.AccountCredentialsVO;
 import br.com.frohlich.integrationtests.vo.PersonVO;
+import br.com.frohlich.integrationtests.vo.TokenVO;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.filter.log.LogDetail;
 import io.restassured.filter.log.RequestLoggingFilter;
@@ -214,6 +214,19 @@ public class PersonControllerCorsJsonTest extends AbstractIntegrationTest {
         assertEquals("Invalid CORS request", content);
     }
 
+    @Test
+    @Order(6)
+    public void testDelete() throws JsonMappingException, JsonProcessingException {
+
+        given().spec(specification)
+                .contentType(TestConfigs.CONTENT_TYPE_JSON)
+                .pathParam("id", person.getId())
+                .when()
+                .delete("{id}")
+                .then()
+                .statusCode(204);
+    }
+
     private void mockPerson() {
         person.setFirstName("Richard");
         person.setLastName("Stallman");
@@ -221,6 +234,7 @@ public class PersonControllerCorsJsonTest extends AbstractIntegrationTest {
         person.setGender("Male");
         person.setEnabled(true);
     }
+
 }
 
 
