@@ -1,27 +1,27 @@
-# Spring Boot REST & Java: Da Teoria à AWS com Prática Intensiva
+# Spring Boot REST & Java: From Theory to AWS with Intensive Practice
 
-Este projeto é o resultado do meu estudo intensivo sobre REST APIs RESTful, do básico à implantação na AWS, utilizando Spring Boot 3, Java e Docker. Inspirado pelo curso que estou fazendo na Udemy, este repositório reflete a jornada de aprendizado e implementação de uma API REST do zero.
+This project is the result of my intensive study on RESTful APIs, from basics to deployment on AWS, using Spring Boot 3, Java, and Docker. Inspired by the course I am taking on Udemy, this repository reflects the journey of learning and implementing a REST API from scratch.
 
-## Sobre o Projeto
-Este projeto é focado em oferecer uma experiência de aprendizado prática (90%) com uma base teórica sólida (10%). O objetivo é desenvolver uma API RESTful do absoluto zero, seguindo as melhores práticas do mercado e utilizando as mais modernas ferramentas e frameworks disponíveis.
+## About the Project
+This project is focused on providing a practical learning experience (90%) with a solid theoretical foundation (10%). The goal is to develop a RESTful API from scratch, following best market practices and using the most modern tools and frameworks available.
 
-## Conhecimentos que adquiri e que venho adquirindo no decorrer do projeto:
-- Fundamentos do REST: Compreender os conceitos teóricos que embasam o REST, o modelo de maturidade RESTful e os principais verbos HTTP.
-- Desenvolvimento Prático: Como desenvolver uma API RESTful prática, utilizando o Spring Boot framework, com enfoque em funcionalidades como paginação, versionamento, media types, content negotiation, upload e download de arquivos.
-- Ferramentas de Desenvolvimento: Uso do Postman para fazer requests RESTful, documentação de APIs com Swagger (Open API), e conceitos básicos de SQL e Migrations.
-- Segurança: Técnicas de autenticação REST e segurança com JWT.
-- Testes: Implementação de testes unitários com JUnit 5 e Mockito, e testes de integração com JUnit 5, REST Assured e Testcontainers.
-- AWS e DevOps: Como utilizar serviços principais da AWS (RDS, EC2, IAM User, ECS) para a implantação, além de práticas de CI/CD com GitHub Actions para um fluxo de trabalho automatizado de integração e deploy na Amazon AWS.
-- Integração e Consumo de APIs: Aprender a consumir APIs de terceiros e integrar com outros serviços.
+## Knowledge I have acquired and am acquiring throughout the project:
+- REST Fundamentals: Understanding the theoretical concepts that underpin REST, the RESTful maturity model, and the main HTTP verbs.
+- Practical Development: How to develop a practical RESTful API using the Spring Boot framework, focusing on features such as pagination, versioning, media types, content negotiation, file upload and download.
+- Development Tools: Using Postman to make RESTful requests, API documentation with Swagger (Open API), and basic concepts of SQL and Migrations.
+- Security: REST authentication techniques and security with JWT.
+- Testing: Implementation of unit tests with JUnit 5 and Mockito, and integration tests with JUnit 5, REST Assured, and Testcontainers.
+- AWS and DevOps: How to use key AWS services (RDS, EC2, IAM User, ECS) for deployment, as well as CI/CD practices with GitHub Actions for an automated workflow of integration and deployment on Amazon AWS.
+- Integration and Consumption of APIs: Learning to consume third-party APIs and integrate with other services.
 
-## Por que este projeto?
-Este repositório não é apenas um registro do meu progresso no curso, mas também uma fonte de conhecimento prático para quem deseja aprender a desenvolver e implantar APIs RESTful de qualidade. Se você está buscando uma aprendizagem focada em aplicação real, juntamente com a exploração de técnicas avançadas e melhores práticas em desenvolvimento de software, este projeto é para você.
+## Why this project?
+This repository is not just a record of my progress in the course but also a source of practical knowledge for anyone who wants to learn to develop and deploy quality RESTful APIs. If you are looking for learning focused on real application, along with the exploration of advanced techniques and best practices in software development, this project is for you.
 
-## Como Começar
-Sinta-se livre para clonar este repositório, explorar o código e utilizar como base para seus próprios projetos. Cada módulo contém implementações específicas com base na tecnologia ou no conceito aprendido. Isso inclui desde os fundamentos do REST e segurança com JWT até o uso de serviços AWS e práticas de CI/CD.
-```
+## How to Start
+Feel free to clone this repository, explore the code, and use it as a base for your own projects. Each module contains specific implementations based on the technology or concept learned. This includes everything from REST fundamentals and JWT security to the use of AWS services and CI/CD practices.
+`
 git clone https://github.com/eduardofrohlich/spring-boot-rest-and-java.git
-```
+`
 
-### Contribuições
-Contribuições são sempre bem-vindas! Se você tem alguma sugestão para melhorar este projeto, por favor, abra uma issue ou envie um pull request.
+### Contributions
+Contributions are always welcome! If you have any suggestions to improve this project, please open an issue or send a pull request.
