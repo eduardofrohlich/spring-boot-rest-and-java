@@ -212,11 +212,11 @@ public class BookControllerJsonTest extends AbstractIntegrationTest {
         assertNotNull(foundBookOne.getTitle());
         assertNotNull(foundBookOne.getPrice());
 
-        assertEquals(8, foundBookOne.getKey());
+        assertEquals(2, foundBookOne.getKey());
 
-        assertEquals("Domain Driven Design", foundBookOne.getTitle());
-        assertEquals("Eric Evans", foundBookOne.getAuthor());
-        assertEquals(92, foundBookOne.getPrice());
+        assertEquals("Design Patterns", foundBookOne.getTitle());
+        assertEquals("Ralph Johnson, Erich Gamma, John Vlissides e Richard Helm", foundBookOne.getAuthor());
+        assertEquals(45.0, foundBookOne.getPrice());
 
         BookVO foundBookThree = books.get(2);
         book = foundBookThree;
@@ -227,11 +227,11 @@ public class BookControllerJsonTest extends AbstractIntegrationTest {
         assertNotNull(foundBookThree.getTitle());
         assertNotNull(foundBookThree.getPrice());
 
-        assertEquals(5, foundBookThree.getKey());
+        assertEquals(3, foundBookThree.getKey());
 
-        assertEquals("Code complete", foundBookThree.getTitle());
-        assertEquals("Steve McConnell", foundBookThree.getAuthor());
-        assertEquals(58.0, foundBookThree.getPrice());
+        assertEquals("Clean Code", foundBookThree.getTitle());
+        assertEquals("Robert C. Martin", foundBookThree.getAuthor());
+        assertEquals(77.0, foundBookThree.getPrice());
 
     }
 
