@@ -57,7 +57,7 @@ public class PersonServices {
     }
 
     public PagedModel<EntityModel<PersonVO>> findPeopleByName(String firstName, Pageable pageable) {
-        logger.info("Finding all people!");
+        logger.info("Finding all people by name " + firstName);
 
         var personPage = repository.findPeopleByName(firstName, pageable); //returns a Page
 

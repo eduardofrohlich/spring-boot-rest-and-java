@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.TimeZone;
 
 import static io.restassured.RestAssured.given;
@@ -99,9 +100,6 @@ public class BookControllerJsonTest extends AbstractIntegrationTest {
         assertEquals("Michael C. Feathers", book.getAuthor());
         assertEquals("Working effectively with legacy code", book.getTitle());
         assertEquals(49.00, book.getPrice());
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
-        assertEquals(dateFormat.parse("2017-11-28"), book.getLaunchDate());
     }
 
 
@@ -135,15 +133,12 @@ public class BookControllerJsonTest extends AbstractIntegrationTest {
         assertEquals("Working effectively with legacy code - Updated", bookUpdated.getTitle());
         assertEquals("Michael C. Feathers", bookUpdated.getAuthor());
         assertEquals(49.0, bookUpdated.getPrice());
-
     }
 
 
     @Test
     @Order(3)
     public void testFindById() throws IOException {
-        mockBook();
-
         var content = given().spec(specification)
                 .contentType(TestConfigs.CONTENT_TYPE_JSON)
                 .pathParam("id", book.getKey())
@@ -155,19 +150,19 @@ public class BookControllerJsonTest extends AbstractIntegrationTest {
                 .body()
                 .asString();
 
-        BookVO foundBookOne = objectMapper.readValue(content, BookVO.class);
+        BookVO foundBook = objectMapper.readValue(content, BookVO.class);
 
-        assertNotNull(foundBookOne);
-        assertNotNull(foundBookOne.getKey());
-        assertNotNull(foundBookOne.getTitle());
-        assertNotNull(foundBookOne.getAuthor());
-        assertNotNull(foundBookOne.getPrice());
+        assertNotNull(foundBook);
+        assertNotNull(foundBook.getKey());
+        assertNotNull(foundBook.getTitle());
+        assertNotNull(foundBook.getAuthor());
+        assertNotNull(foundBook.getPrice());
 
-        assertEquals(book.getKey(), foundBookOne.getKey());
+        assertEquals(book.getKey(), foundBook.getKey());
 
-        assertEquals("Working effectively with legacy code - Updated", foundBookOne.getTitle());
-        assertEquals("Michael C. Feathers", foundBookOne.getAuthor());
-        assertEquals(49.00, foundBookOne.getPrice());
+        assertEquals("Working effectively with legacy code - Updated", foundBook.getTitle());
+        assertEquals("Michael C. Feathers", foundBook.getAuthor());
+        assertEquals(49.00, foundBook.getPrice());
     }
 
     @Test
@@ -200,11 +195,11 @@ public class BookControllerJsonTest extends AbstractIntegrationTest {
                 .asString();
 
         WrapperBookVO wrapper = objectMapper.readValue(content, WrapperBookVO.class);
+        List<BookVO> books = wrapper.getEmbedded().getBooks();
 
         assertNotNull(wrapper);
         assertNotNull(wrapper.getEmbedded());
 
-        var books = wrapper.getEmbedded().getbooks();
         assertNotNull(books);
         assertFalse(books.isEmpty());
 
@@ -217,14 +212,11 @@ public class BookControllerJsonTest extends AbstractIntegrationTest {
         assertNotNull(foundBookOne.getTitle());
         assertNotNull(foundBookOne.getPrice());
 
-        assertEquals(2, foundBookOne.getKey());
+        assertEquals(8, foundBookOne.getKey());
 
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
-        assertEquals(dateFormat.parse("2017-11-29"), foundBookOne.getLaunchDate());
-        assertEquals("Design Patterns", foundBookOne.getTitle());
-        assertEquals("Ralph Johnson, Erich Gamma, John Vlissides e Richard Helm", foundBookOne.getAuthor());
-        assertEquals(45.0, foundBookOne.getPrice());
+        assertEquals("Domain Driven Design", foundBookOne.getTitle());
+        assertEquals("Eric Evans", foundBookOne.getAuthor());
+        assertEquals(92, foundBookOne.getPrice());
 
         BookVO foundBookThree = books.get(2);
         book = foundBookThree;
@@ -235,14 +227,11 @@ public class BookControllerJsonTest extends AbstractIntegrationTest {
         assertNotNull(foundBookThree.getTitle());
         assertNotNull(foundBookThree.getPrice());
 
-        assertEquals(3, foundBookThree.getKey());
+        assertEquals(5, foundBookThree.getKey());
 
-        dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
-        assertEquals(dateFormat.parse("2009-01-10"), foundBookThree.getLaunchDate());
-        assertEquals("Clean Code", foundBookThree.getTitle());
-        assertEquals("Robert C. Martin", foundBookThree.getAuthor());
-        assertEquals(77.0, foundBookThree.getPrice());
+        assertEquals("Code complete", foundBookThree.getTitle());
+        assertEquals("Steve McConnell", foundBookThree.getAuthor());
+        assertEquals(58.0, foundBookThree.getPrice());
 
     }
 

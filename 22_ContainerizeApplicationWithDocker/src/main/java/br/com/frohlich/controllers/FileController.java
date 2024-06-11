@@ -4,6 +4,7 @@ import br.com.frohlich.data.vo.v1.UploadFileResponseVO;
 import br.com.frohlich.services.FileStorageService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -23,11 +24,9 @@ import java.util.stream.Collectors;
 public class FileController {
 
     private final Logger logger = Logger.getLogger(FileController.class.getName());
-    private final FileStorageService service;
 
-    public FileController(FileStorageService service) {
-        this.service = service;
-    }
+    @Autowired
+    private FileStorageService service;
 
     @PostMapping("/uploadFile")
     public UploadFileResponseVO uploadFile(@RequestParam("file") MultipartFile file) {

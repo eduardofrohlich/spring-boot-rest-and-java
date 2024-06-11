@@ -1,0 +1,37 @@
+version: '3.9'
+
+services:
+  db:
+    image: postgres:16.3-alpine3.20
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: rest_with_spring_boot_erudio
+    ports:
+      - "5434:5432"
+    networks:
+      - frohlich-network
+
+  rest-with-spring-boot-erudio:
+    image: eduardofrohlich/rest-with-spring-boot-erudio
+    restart: always
+    build:
+      context: .
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/rest_with_spring_boot_erudio
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+      SPRING_JPA_HIBERNATE_DDL_AUTO: none
+      TZ: America/Sao_Paulo
+    ports:
+      - "80:80"
+    expose:
+      - "80"
+    depends_on:
+      - db
+    networks:
+      - frohlich-network
+networks:
+  frohlich-network:
+    driver: bridge

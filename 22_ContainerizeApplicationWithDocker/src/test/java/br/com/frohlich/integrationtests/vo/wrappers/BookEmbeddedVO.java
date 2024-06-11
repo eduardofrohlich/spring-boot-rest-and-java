@@ -14,11 +14,11 @@ public class BookEmbeddedVO {
     public BookEmbeddedVO() {
     }
 
-    public List<BookVO> getbooks() {
+    public List<BookVO> getBooks() {
         return books;
     }
 
-    public void setbooks(List<BookVO> books) {
+    public void setBooks(List<BookVO> books) {
         this.books = books;
     }
 
