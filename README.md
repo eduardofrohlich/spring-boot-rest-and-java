@@ -22,6 +22,8 @@ Feel free to clone this repository, explore the code, and use it as a base for y
 `
 git clone https://github.com/eduardofrohlich/spring-boot-rest-and-java.git
 `
+## Docker Hub Image
+[![Docker Hub Repo](https://img.shields.io/docker/pulls/eduardofrohlich/rest-with-spring-boot-erudio.svg)](https://hub.docker.com/repository/docker/DOCKER_HUB_USERNAME/RESPOSITORY_NAME)
 
 ### Contributions
 Contributions are always welcome! If you have any suggestions to improve this project, please open an issue or send a pull request.
