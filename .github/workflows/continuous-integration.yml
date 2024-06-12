@@ -26,11 +26,11 @@ jobs:
         cache: maven
 
     - name: Build Application JAR
-      working-directory: ./22_ContainerizeApplicationWithDocker
+      working-directory: ./23_DeployToAWS
       run: mvn clean package
 
     - name: Docker Compose Build
-      working-directory: ./22_ContainerizeApplicationWithDocker
+      working-directory: ./23_DeployToAWS
       run: docker compose up -d --build
 
     - name: Push to Docker Hub Container Registry
