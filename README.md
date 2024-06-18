@@ -2,6 +2,9 @@
 
 This project is the result of my intensive study on RESTful APIs, from basics to deployment on AWS, using Spring Boot 3, Java, and Docker. Inspired by the course I am taking on Udemy, this repository reflects the journey of learning and implementing a REST API from scratch.
 
+[![Continuous Integration with GitHub Actions](https://github.com/eduardofrohlich/spring-boot-rest-and-java/actions/workflows/continuous-integration.yml/badge.svg)](https://github.com/eduardofrohlich/spring-boot-rest-and-java/actions/workflows/continuous-integration.yml)
+[![Docker Hub Repo](https://img.shields.io/docker/pulls/eduardofrohlich/rest-with-spring-boot-erudio.svg)](https://hub.docker.com/repository/docker/eduardofrohlich/rest-with-spring-boot-erudio)
+
 ## About the Project
 This project is focused on providing a practical learning experience (90%) with a solid theoretical foundation (10%). The goal is to develop a RESTful API from scratch, following best market practices and using the most modern tools and frameworks available.
 
@@ -22,8 +25,6 @@ Feel free to clone this repository, explore the code, and use it as a base for y
 `
 git clone https://github.com/eduardofrohlich/spring-boot-rest-and-java.git
 `
-## Docker Hub Image
-[![Docker Hub Repo](https://img.shields.io/docker/pulls/eduardofrohlich/rest-with-spring-boot-erudio.svg)](https://hub.docker.com/repository/docker/eduardofrohlich/rest-with-spring-boot-erudio)
 
 ### Contributions
 Contributions are always welcome! If you have any suggestions to improve this project, please open an issue or send a pull request.
